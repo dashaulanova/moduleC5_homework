@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+  	<meta charset="utf-8">
+  	<title>Задание</title>
+  	<link rel="stylesheet" type="text/css" href="styles/style.css">
+  </head>
+  <body>
+  	<label for="page-number">Номер страницы</label>
+    <input name="page-number" id="page-number" type="text">
+    <label for="limit">Лимит</label>
+    <input name="limit" id="limit" type="text">
+    <input name="button" id="button" type="submit" value="Запрос">
+    <p id="error"></p>
+    <div id="photo"></div>
+    <script>
+    	const btn = document.querySelector('#button');
+    	let container = document.querySelector('#photo');
+
+		if (localStorage.getItem('0')) {
+		    for (let elem = 0; elem < localStorage.length; elem++) {
+				console.log(localStorage.getItem(elem));
+				let div = document.createElement('div');
+				div.innerHTML =`<img src=${localStorage.getItem(elem)} width=100%>`;
+				container.append(div);
+		    	};
+		} 
+
+		btn.onclick = () => {
+		  let page = Number(document.querySelector("#page-number").value);
+		  let limit = Number(document.querySelector("#limit").value);
+		  let error = document.querySelector("#error");
+		  let validationPage = true;
+		  let validationLimit = true;
+		  localStorage.clear();
+		  container.innerHTML = '';
+		  
+		  if (isNaN(page) || page < 1 || page > 10) {
+		    validationPage = false;
+		  } 
+		  
+		  if (isNaN(limit) || limit < 1 || limit > 10) {
+		    validationLimit = false;
+		  }
+		  
+		  if (!validationPage & !validationLimit) {
+		    error.innerHTML = "Номер страницы и лимит вне диапазона от 1 до 10";
+		  } else if (!validationPage) {
+		    error.innerHTML = "Номер страницы вне диапазона от 1 до 10";
+		  } else if (!validationLimit) {
+		    error.innerHTML = "Лимит вне диапазона от 1 до 10";
+		  } else {
+			    error.innerHTML = "";
+			    let link = `https://picsum.photos/v2/list?page=${page}&limit=${limit}`;
+			    fetch(link)
+			      .then((response) => {return response.json()})
+			      .then((data) => {
+			          for (let elem in data) {
+			            	console.log(elem, data[elem]['download_url']);
+	                		localStorage.setItem(elem, data[elem]['download_url']);
+			            	let div = document.createElement('div');
+			            	div.innerHTML =`<img src=${data[elem]['download_url']} width=90%>`;
+			            	let container = document.querySelector('#photo');
+			            	container.append(div);
+			          }
+			      })
+			      .catch(() => {console.log('error')});
+		  }
+		}
+    </script>
+  </body>
+</html>

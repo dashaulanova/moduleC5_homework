@@ -1,0 +1,14 @@
+#button {
+	background-color: blue;
+	width: 200px;
+	border-radius: 45px;
+	color: white;
+	height: 30px;
+	cursor: pointer;
+}
+
+input {
+	display: block;
+	margin-bottom: 10px;
+}
+
